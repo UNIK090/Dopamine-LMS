@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { formatDistanceToNow } from 'date-fns';
 import { Video } from '../../types';
-import CalendarView from './components/Calendar/CalendarView';
 
 const RecentVideos: React.FC = () => {
   const navigate = useNavigate();
@@ -40,7 +39,11 @@ const RecentVideos: React.FC = () => {
     return Object.values(videoProgress).reduce((map, progress) => {
       map[progress.videoId] = progress;
       return map;
+<<<<<<< HEAD
     }, {} as Record<string, typeof videoProgress[keyof typeof videoProgress]>);
+=======
+    }, {} as Record<string, any>);
+>>>>>>> 7ae1805 (Updated again)
   }, [videoProgress]);
   
   const handleVideoClick = (video: Video) => {

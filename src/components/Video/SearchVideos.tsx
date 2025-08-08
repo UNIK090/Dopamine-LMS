@@ -46,7 +46,7 @@ const handleWatchNow = (video: Video) => {
       return;
     }
     setCurrentVideo(video);
-    navigate(`/video/${video.id}`);
+    navigate('/player');
   };
   
   return (
