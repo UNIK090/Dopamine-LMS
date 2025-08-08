@@ -89,7 +89,7 @@ const CalendarView: React.FC = () => {
                 : isToday(day)
                 ? "bg-blue-100 dark:bg-blue-900"
                 : ""
-            } min-h-[100px cursor-pointer`}
+            } min-h-[100px] cursor-pointer`}
             onClick={() => handleDateClick(cloneDay)}
           >
             <div className="text-right">{format(day, 'd')}</div>
@@ -159,7 +159,7 @@ const CalendarView: React.FC = () => {
       const activities = getActivitiesForDate(dateString);
       setSelectedDayActivities(activities);
     }
-  }, [selectedDate, getActivitiesForDate);
+  }, [selectedDate, getActivitiesForDate]);
 
   const [reminderForm, setReminderForm] = useState({
     title: "",
