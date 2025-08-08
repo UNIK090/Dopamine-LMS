@@ -39,11 +39,7 @@ const RecentVideos: React.FC = () => {
     return Object.values(videoProgress).reduce((map, progress) => {
       map[progress.videoId] = progress;
       return map;
-<<<<<<< HEAD
-    }, {} as Record<string, typeof videoProgress[keyof typeof videoProgress]>);
-=======
     }, {} as Record<string, any>);
->>>>>>> 7ae1805 (Updated again)
   }, [videoProgress]);
   
   const handleVideoClick = (video: Video) => {
