@@ -30,7 +30,7 @@ const CalendarView: React.FC = () => {
     notificationSettings,
   } = useAppStore();
 
-  const [currentDate, setCurrentDate = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [showModal, setShowModal] = useState(false);
   const [selectedDayActivities, setSelectedDayActivities] = useState<DailyVideoActivity[]>([]);
