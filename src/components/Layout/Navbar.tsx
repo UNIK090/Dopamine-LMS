@@ -10,6 +10,7 @@ const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
@@ -36,9 +37,28 @@ const Navbar: React.FC = () => {
     };
   }, [showUserMenu]);
 
+  // Handle scroll to toggle blur
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <nav
-      className={`${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} shadow-md h-20`}
+      className={`${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"} shadow-md h-20 transition-colors duration-300 ${
+        isScrolled ? "backdrop-blur-md bg-opacity-70" : "bg-opacity-100"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
