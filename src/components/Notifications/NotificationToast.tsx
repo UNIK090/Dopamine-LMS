@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, Clock, Trophy, Target, Bell } from "lucide-react";
 import { AppNotification } from "../../types";
 
@@ -80,96 +81,83 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   };
 
   return (
-    <div
-      className={`
-        fixed top-4 right-4 z-50 max-w-sm w-full
-        transform transition-all duration-300 ease-out
-        ${isVisible && !isExiting ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
-      `}
-    >
-      <div
-        onClick={handleClick}
-        className={`
-          ${getBackgroundColor()}
-          rounded-lg border shadow-lg cursor-pointer
-          hover:shadow-xl transition-shadow duration-200
-          animate-bounce-in
-        `}
-      >
-        <div className="p-4">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          className={`
+            fixed top-4 right-4 z-50 max-w-sm w-full
+            rounded-lg border shadow-lg cursor-pointer
+            hover:shadow-xl transition-shadow duration-200
+            ${getBackgroundColor()}
+          `}
+        >
+          <div onClick={handleClick} className="p-4">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0 mt-0.5">{getIcon()}</div>
 
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                {notification.title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {notification.message}
-              </p>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {notification.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {notification.message}
+                </p>
 
-              {/* Action buttons for reminders */}
-              {notification.type === "reminder" && (
-                <div className="mt-3 flex space-x-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClose();
-                    }}
-                    className="text-xs px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
-                  >
-                    Dismiss
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Handle "Start Learning" action
-                      handleClose();
-                    }}
-                    className="text-xs px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Start Learning
-                  </button>
-                </div>
-              )}
+                {/* Action buttons for reminders */}
+                {notification.type === "reminder" && (
+                  <div className="mt-3 flex space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleClose();
+                      }}
+                      className="text-xs px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/70 transition-colors"
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle "Start Learning" action
+                        handleClose();
+                      }}
+                      className="text-xs px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Start Learning
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
+                className="flex-shrink-0 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <X className="h-4 w-4 text-gray-400" />
+              </button>
             </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClose();
-              }}
-              className="flex-shrink-0 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              <X className="h-4 w-4 text-gray-400" />
-            </button>
           </div>
-        </div>
 
-        {/* Progress bar for auto-close */}
-        {autoClose && notification.type !== "reminder" && (
-          <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-b-lg overflow-hidden">
-            <div
-              className="h-full bg-gray-400 dark:bg-gray-500 rounded-b-lg animate-pulse"
-              style={{
-                animation: `shrink ${duration}ms linear forwards`,
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        @keyframes shrink {
-          from {
-            width: 100%;
-          }
-          to {
-            width: 0%;
-          }
-        }
-      `}</style>
-    </div>
+          {/* Progress bar for auto-close */}
+          {autoClose && notification.type !== "reminder" && (
+            <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+              <div
+                className="h-full bg-gray-400 dark:bg-gray-500 rounded-b-lg animate-pulse"
+                style={{
+                  animation: `shrink ${duration}ms linear forwards`,
+                }}
+              />
+            </div>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

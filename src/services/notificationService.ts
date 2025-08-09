@@ -168,3 +168,20 @@ class NotificationService {
 }
 
 export const notificationService = NotificationService.getInstance();
+
+export const scheduleReminderNotification = (reminder: Reminder) => {
+  const now = new Date();
+  const reminderTime = new Date(`${reminder.date}T${reminder.time}`);
+  const timeUntilReminder = reminderTime.getTime() - now.getTime();
+
+  if (timeUntilReminder > 0) {
+    setTimeout(() => {
+      if (Notification.permission === 'granted') {
+        new Notification('Learning Reminder', {
+          body: reminder.title,
+          icon: '/path/to/your/icon.png' // Add an appropriate icon
+        });
+      }
+    }, timeUntilReminder);
+  }
+};

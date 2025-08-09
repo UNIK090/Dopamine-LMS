@@ -1,12 +1,21 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Chrome, BookOpen, TrendingUp, Calendar, Bell } from 'lucide-react';
 
 const SignIn: React.FC = () => {
   const { signInWithGoogle, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignIn = async () => {
-    await signInWithGoogle();
+    try {
+      await signInWithGoogle();
+      // After successful sign-in, navigate to the dashboard
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error signing in:', error);
+      // Handle sign-in error (e.g., show an error message)
+    }
   };
 
   return (

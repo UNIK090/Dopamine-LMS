@@ -74,6 +74,14 @@ export interface AppNotification {
   createdAt: string;
 }
 
+export interface Annotation {
+  id: string;
+  timestamp: number;
+  text: string;
+  color: string;
+  createdAt: Date;
+}
+
 export interface AuthUser {
   uid: string;
   email: string | null;

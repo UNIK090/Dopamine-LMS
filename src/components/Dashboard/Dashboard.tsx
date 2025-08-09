@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Play,
   Clock,
@@ -16,86 +16,130 @@ import UpcomingReminders from "./UpcomingReminders";
 import SearchVideos from "../Video/SearchVideos";
 
 const Dashboard: React.FC = () => {
-  const { userStats, isSearching } = useAppStore();
+  const { 
+    userStats, 
+    isSearching, 
+    setIsSearching, 
+    darkMode,
+    realTimeStatistics,
+    realTimeLearningPath,
+    userName
+  } = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    // You can fetch real-time data here if needed
+  }, []);
+
+  const formatWatchTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-full">Loading...</div>;
+  }
 
   return (
-    <div className="h-full flex flex-col space-y-3">
-      <div className="flex justify-between items-center flex-shrink-0">
-        <h1 className="text-xl font-bold">Dashboard</h1>
+    <div className={`h-full flex flex-col space-y-4 p-6 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold mb-4 dark:text-white">Dashboard</h1>
         <VideoSearchToggle />
       </div>
 
+      <div className={`bg-white dark:bg-gray-800 rounded-lg shadow p-6 ${
+        darkMode ? 'text-gray-200' : 'text-gray-800'
+      }`}>
+        <h2 className="text-xl font-semibold mb-2">Welcome&nbsp;{userName || 'User'}!</h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Here's an overview of your learning progress.
+        </p>
+      </div>
+
       {/* Stats cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 flex-shrink-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Watch Time"
           value={formatWatchTime(userStats.totalWatchTime)}
-          icon={<Clock className="h-8 w-8 text-blue-500" />}
-          color="bg-blue-100 dark:bg-blue-900"
+          icon={<Clock className="h-8 w-8" />}
+          color={darkMode ? 'bg-blue-900' : 'bg-blue-100'}
         />
         <StatsCard
-          title="Completed"
-          value={`${userStats.completedVideos} videos`}
-          icon={<CheckCircle className="h-8 w-8 text-green-500" />}
-          color="bg-green-100 dark:bg-green-900"
+          title="Completed Videos"
+          value={userStats.completedVideos.toString()}
+          icon={<CheckCircle className="h-8 w-8" />}
+          color={darkMode ? 'bg-green-900' : 'bg-green-100'}
         />
         <StatsCard
           title="Current Streak"
           value={`${userStats.currentStreak} days`}
-          icon={<Flame className="h-8 w-8 text-orange-500" />}
-          color="bg-orange-100 dark:bg-orange-900"
+          icon={<Flame className="h-8 w-8" />}
+          color={darkMode ? 'bg-orange-900' : 'bg-orange-100'}
         />
         <StatsCard
           title="Longest Streak"
           value={`${userStats.longestStreak} days`}
-          icon={<BarChart className="h-8 w-8 text-purple-500" />}
-          color="bg-purple-100 dark:bg-purple-900"
+          icon={<BarChart className="h-8 w-8" />}
+          color={darkMode ? 'bg-purple-900' : 'bg-purple-100'}
         />
       </div>
 
-      {/* Content area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 flex-1 min-h-0">
-        {/* Search or Recent Videos */}
-        <div className="lg:col-span-2">
-          {isSearching ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-3 h-full flex flex-col">
-              <div className="flex items-center mb-2">
-                <Search className="h-4 w-4 mr-2 text-indigo-500" />
-                <h2 className="text-lg font-semibold">Find Videos</h2>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <SearchVideos />
-              </div>
+      {/* Main content area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-grow">
+        {/* Video section */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            {isSearching ? (
+              <>
+                <Play className="h-5 w-5 mr-2" />
+                Find Videos
+              </>
+            ) : (
+              <>
+                <Play className="h-5 w-5 mr-2" />
+                Recent Videos
+              </>
+            )}
+          </h2>
+          {isSearching ? <SearchVideos /> : <RecentVideos />}
+        </div>
+
+        {/* Reminders section */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <CalendarIcon className="h-5 w-5 mr-2" />
+            Upcoming Reminders
+          </h2>
+          <UpcomingReminders />
+        </div>
+      </div>
+
+      {/* Real-time statistics and learning path */}
+      {(realTimeStatistics || realTimeLearningPath) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {realTimeStatistics && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+              <h2 className="text-xl font-semibold mb-4">Real-time Statistics</h2>
+              {/* Display real-time statistics here */}
             </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-3 h-full flex flex-col">
-              <div className="flex items-center mb-2">
-                <Play className="h-4 w-4 mr-2 text-indigo-500" />
-                <h2 className="text-lg font-semibold">Recent Videos</h2>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <RecentVideos />
-              </div>
+          )}
+          {realTimeLearningPath && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+              <h2 className="text-xl font-semibold mb-4">Learning Path Progress</h2>
+              {/* Display real-time learning path progress here */}
             </div>
           )}
         </div>
-
-        {/* Calendar events */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-3 h-full flex flex-col">
-          <div className="flex items-center mb-2">
-            <CalendarIcon className="h-4 w-4 mr-2 text-indigo-500" />
-            <h2 className="text-lg font-semibold">Reminders</h2>
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <UpcomingReminders />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
 
-// Stats card component
 interface StatsCardProps {
   title: string;
   value: string;
@@ -103,31 +147,14 @@ interface StatsCardProps {
   color: string;
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color }) => {
-  return (
-    <div className={`${color} rounded-lg p-2 shadow-md flex items-center`}>
-      <div className="rounded-full p-2 mr-2 bg-white dark:bg-gray-800">
-        <div className="scale-75">{icon}</div>
-      </div>
-      <div>
-        <p className="text-xs font-medium opacity-70">{title}</p>
-        <p className="text-sm font-bold">{value}</p>
-      </div>
+const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color }) => (
+  <div className={`${color} rounded-lg shadow p-4 flex items-center`}>
+    <div className="mr-4">{icon}</div>
+    <div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-2xl font-bold">{value}</p>
     </div>
-  );
-};
-
-// Helper function to format watch time in hours and minutes
-const formatWatchTime = (seconds: number): string => {
-  if (seconds < 60) return `${seconds} sec`;
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} min`;
-
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-
-  return `${hours}h ${remainingMinutes}m`;
-};
+  </div>
+);
 
 export default Dashboard;

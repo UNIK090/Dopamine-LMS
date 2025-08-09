@@ -8,19 +8,19 @@ import toast from 'react-hot-toast';
 
 const SearchVideos: React.FC = () => {
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { playlists, searchResults, setSearchResults, setCurrentVideo, addVideoToPlaylist } = useAppStore();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | ''>('');
-  
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!query.trim()) return;
-    
+
+    if (!searchTerm.trim()) return;
+
     setIsLoading(true);
     try {
-      const results = await searchVideos(query);
+      const results = await searchVideos(searchTerm);
       setSearchResults(results);
     } catch (error) {
       console.error('Error searching videos:', error);
@@ -29,18 +29,18 @@ const SearchVideos: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleAddToPlaylist = (video: Video) => {
     if (!selectedPlaylistId) {
       toast.error('Please select a playlist first');
       return;
     }
-    
+
     addVideoToPlaylist(selectedPlaylistId, video);
     toast.success(`Added "${video.title}" to playlist`);
   };
-  
-const handleWatchNow = (video: Video) => {
+
+  const handleWatchNow = (video: Video) => {
     if (!video.id) {
       console.error('Video ID is undefined. Cannot navigate to video player.');
       return;
@@ -48,7 +48,7 @@ const handleWatchNow = (video: Video) => {
     setCurrentVideo(video);
     navigate('/player');
   };
-  
+
   return (
     <div className="space-y-4">
       <form onSubmit={handleSearch} className="flex gap-2">
@@ -60,19 +60,19 @@ const handleWatchNow = (video: Video) => {
             type="text"
             className="block w-full rounded-md border-gray-300 pl-10 pr-12 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
             placeholder="Search for educational videos..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <button
           type="submit"
-          disabled={isLoading || !query.trim()}
+          disabled={isLoading || !searchTerm.trim()}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
         </button>
       </form>
-      
+
       {/* Select playlist dropdown */}
       {searchResults.length > 0 && (
         <div className="mb-4">
@@ -99,32 +99,32 @@ const handleWatchNow = (video: Video) => {
           )}
         </div>
       )}
-      
+
       {/* Search results */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {searchResults.map((video) => (
           <div key={video.id} className="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
             {/* Thumbnail */}
             <div className="relative">
-              <img 
-                src={video.thumbnail} 
+              <img
+                src={video.thumbnail}
                 alt={video.title}
                 className="w-full h-36 object-cover"
               />
               {video.duration && (
-                <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-1 py-0.5 rounded">
+                <div className="absolute bottom-2 right-2 bg-gray-200 text-black dark:bg-black dark:bg-opacity-80 dark:text-white text-xs px-1 py-0.5 rounded">
                   {video.duration}
                 </div>
               )}
             </div>
-            
+
             {/* Content */}
             <div className="p-3">
               <h3 className="font-medium text-sm mb-1 line-clamp-2" title={video.title}>
                 {video.title}
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{video.channelTitle}</p>
-              
+
               {/* Action buttons */}
               <div className="flex space-x-2 mt-2">
                 <button
@@ -145,7 +145,7 @@ const handleWatchNow = (video: Video) => {
           </div>
         ))}
       </div>
-      
+
       {/* Loading state */}
       {isLoading && (
         <div className="flex justify-center items-center py-8">
@@ -153,17 +153,17 @@ const handleWatchNow = (video: Video) => {
           <span className="ml-2 text-gray-500">Searching videos...</span>
         </div>
       )}
-      
+
       {/* Empty state */}
-      {searchResults.length === 0 && !isLoading && query && (
+      {searchResults.length === 0 && !isLoading && searchTerm && (
         <div className="text-center py-8">
-          <p className="text-gray-500 dark:text-gray-400">No videos found for "{query}".</p>
+          <p className="text-gray-500 dark:text-gray-400">No videos found for "{searchTerm}".</p>
           <p className="text-gray-500 dark:text-gray-400 mt-2">Try a different search term.</p>
         </div>
       )}
-      
+
       {/* Initial state */}
-      {searchResults.length === 0 && !isLoading && !query && (
+      {searchResults.length === 0 && !isLoading && !searchTerm && (
         <div className="text-center py-8">
           <p className="text-gray-500 dark:text-gray-400">
             Search for educational videos to add to your learning playlists.

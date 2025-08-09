@@ -1,12 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: "https://learntrack-a1d1a-default-rtdb.firebaseio.com",
+  databaseURL: "https://learntrack-a1d1a-default-rtdb.firebaseio.com/",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
@@ -20,16 +20,12 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Auth and get a reference to the service
 export const auth = getAuth(app);
 
-// Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app);
-
-// Enable offline persistence for Firestore
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code === 'failed-precondition') {
-    console.warn("Multiple tabs open, offline persistence can only be enabled in one tab at a time.");
-  } else if (err.code === 'unimplemented') {
-    console.warn("The current browser does not support all features required to enable offline persistence.");
-  }
+// Initialize Cloud Firestore with persistent cache (replaces deprecated enableIndexedDbPersistence)
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    cacheSizeBytes: 40 * 1024 * 1024, // 40MB cache size
+    tabManager: persistentMultipleTabManager()
+  })
 });
 
 // Initialize Realtime Database

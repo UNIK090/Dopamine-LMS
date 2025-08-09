@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -7,156 +7,67 @@ import {
   Calendar,
   BookOpen, 
   BarChart,
-  Settings 
+  Settings,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 
 const Sidebar: React.FC = () => {
   const { darkMode } = useAppStore();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const navItems = [
+    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { to: "/playlists", icon: ListVideo, label: "My Playlists" },
+    { to: "/player", icon: Play, label: "Video Player" },
+    { to: "/calendar", icon: Calendar, label: "Calendar" },
+    { to: "/learning-path", icon: BookOpen, label: "Learning Path" },
+    { to: "/statistics", icon: BarChart, label: "Statistics" },
+    { to: "/settings", icon: Settings, label: "Settings" },
+  ];
 
   return (
     <div 
-      className={`${darkMode ? 'bg-gray-800' : 'bg-white'} ${
-        collapsed ? 'w-16' : 'w-64'
-      } shadow-lg transition-all duration-300 ease-in-out hidden md:block`}
+      className={`
+        ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}
+        ${collapsed ? 'w-16' : 'w-64'}
+        flex flex-col h-full transition-all duration-300 ease-in-out
+      `}
     >
-      <div className="py-4 px-2">
-        <div className="flex flex-col h-full">
-          <div className="space-y-1">
+      <div className="flex-grow overflow-y-auto">
+        <nav className="mt-5 px-2">
+          {navItems.map((item) => (
             <NavLink
-              to="/"
+              key={item.to}
+              to={item.to}
               className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
+                flex items-center px-2 py-2 mt-1 rounded-md text-sm font-medium
                 ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
+                ${isActive
+                  ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
+                  : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
                 }
               `}
             >
-              <LayoutDashboard className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Dashboard</span>}
+              <item.icon className={`h-5 w-5 ${collapsed ? '' : 'mr-3'}`} />
+              {!collapsed && <span>{item.label}</span>}
             </NavLink>
-            
-            <NavLink
-              to="/playlists"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <ListVideo className="h-5 w-5 mr-2" />
-              {!collapsed && <span>My Playlists</span>}
-            </NavLink>
-            
-            <NavLink
-              to="/player"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <Play className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Video Player</span>}
-            </NavLink>
-            
-            <NavLink
-              to="/calendar"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <Calendar className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Calendar</span>}
-            </NavLink>
-            
-            <NavLink
-              to="/learning-path"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <BookOpen className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Learning Path</span>}
-            </NavLink>
-            
-            <NavLink
-              to="/statistics"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <BarChart className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Statistics</span>}
-            </NavLink>
-            
-            <NavLink
-              to="/settings"
-              className={({ isActive }) => `
-                flex items-center px-2 py-2 rounded-md text-sm font-medium 
-                ${collapsed ? 'justify-center' : ''}
-                ${
-                  isActive
-                    ? `${darkMode ? 'bg-gray-900 text-white' : 'bg-indigo-100 text-indigo-800'}`
-                    : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              `}
-            >
-              <Settings className="h-5 w-5 mr-2" />
-              {!collapsed && <span>Settings</span>}
-            </NavLink>
-          </div>
-        </div>
+          ))}
+        </nav>
       </div>
       
-      {/* Collapse button at the bottom */}
-      <div className={`absolute bottom-4 ${collapsed ? 'left-4' : 'right-4'}`}>
+      <div className="p-4">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className={`p-2 rounded-full ${
-            darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
-          } transition-colors`}
+          className={`
+            p-2 rounded-full w-full flex items-center justify-center
+            ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}
+            transition-colors
+          `}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {collapsed ? (
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-            </svg>
-          )}
+          {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
       </div>
     </div>

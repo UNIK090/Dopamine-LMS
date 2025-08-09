@@ -1,18 +1,41 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import Dashboard from './components/Dashboard/Dashboard';
-import LearningPathWithRealtime from './components/LearningPath/LearningPathWithRealtime';
-import StatisticsDashboardWithRealtime from './components/Statistics/StatisticsDashboardWithRealtime';
-import CalendarView from './components/Calendar/CalendarView';
 import Playlists from './components/Playlists/Playlists';
-import SettingsDashboard from './components/Settings/SettingsDashboard';
 import VideoPlayer from './components/Video/VideoPlayer';
-import SearchVideos from './components/Video/SearchVideos';
+import CalendarView from './components/Calendar/CalendarView';
+import LearningPath from './components/LearningPath/LearningPath';
+import Statistics from "./components/Statistics/Statistics";
+import SettingsDashboard from './components/Settings/SettingsDashboard';
+import SignIn from './components/Auth/SignIn';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { useRealtimeData } from './hooks/useRealtimeData';
 import ErrorBoundary from './components/ErrorBoundary';
+
+const AuthenticatedRoutes = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/playlists" element={<Playlists />} />
+        <Route path="/player" element={<VideoPlayer />} />
+        <Route path="/calendar" element={<CalendarView />} />
+        <Route path="/learning-path" element={<LearningPath />} />
+        <Route path="/statistics" element={<Statistics />} />
+        <Route path="/settings" element={<SettingsDashboard />} />
+      </Routes>
+    </Layout>
+  );
+};
 
 function App() {
   useRealtimeData();
@@ -22,16 +45,15 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-              <Route index element={<Dashboard />} />
-              <Route path="learning-path" element={<LearningPathWithRealtime />} />
-              <Route path="statistics" element={<StatisticsDashboardWithRealtime />} />
-              <Route path="calendar" element={<CalendarView />} />
-              <Route path="playlists" element={<Playlists />} />
-              <Route path="settings" element={<SettingsDashboard />} />
-              <Route path="player" element={<VideoPlayer />} />
-              <Route path="search" element={<SearchVideos />} />
-            </Route>
+            <Route path="/auth" element={<SignIn />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <AuthenticatedRoutes />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Router>
       </AuthProvider>

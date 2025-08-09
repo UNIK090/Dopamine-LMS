@@ -265,7 +265,7 @@ const VideoPlayer: React.FC = () => {
     const wasAlreadyCompleted = existingProgress?.completed || false;
     const isNowCompleted = completed || currentTime >= duration * 0.95;
 
-    updateVideoProgress(currentVideo.id, currentTime, duration, isNowCompleted);
+    updateVideoProgress(currentVideo.id, currentTime, duration);
     return !wasAlreadyCompleted && isNowCompleted;
   };
 
@@ -349,22 +349,20 @@ const VideoPlayer: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-              <h1 className="text-xl font-bold mb-2 line-clamp-2">
-                {currentVideo.title}
-              </h1>
-              <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mb-2">
-                <div
-                  className="h-full bg-indigo-500 rounded-full transition-all duration-300"
-                  style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
+        <div className="flex flex-col gap-4 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <h1 className="text-xl font-bold mb-2 line-clamp-2">
+              {currentVideo.title}
+            </h1>
+            <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mb-2">
+              <div
+                className="h-full bg-indigo-500 rounded-full transition-all duration-300"
+                style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
             </div>
           </div>
 

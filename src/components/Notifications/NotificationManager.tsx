@@ -6,38 +6,19 @@ import NotificationToast from "./NotificationToast";
 const NotificationManager: React.FC = () => {
   const { notifications, markNotificationAsRead } = useAppStore();
   const [activeToasts, setActiveToasts] = useState<AppNotification[]>([]);
-  const [processedNotifications, setProcessedNotifications] = useState<
-    Set<string>
-  >(new Set());
 
   useEffect(() => {
-    // Check for new unread notifications
     const unreadNotifications = notifications.filter(
-      (notification) =>
-        !notification.read && !processedNotifications.has(notification.id),
+      (notification) => !notification.read
     );
 
-    if (unreadNotifications.length > 0) {
-      const newNotification =
-        unreadNotifications[unreadNotifications.length - 1];
-
-      // Add to active toasts
-      setActiveToasts((prev) => [...prev, newNotification]);
-
-      // Mark as processed to avoid showing again
-      setProcessedNotifications(
-        (prev) => new Set([...prev, newNotification.id]),
-      );
-    }
-  }, [notifications, processedNotifications]);
+    setActiveToasts(unreadNotifications);
+  }, [notifications]);
 
   const handleCloseToast = (notificationId: string) => {
     setActiveToasts((prev) =>
-      prev.filter((toast) => toast.id !== notificationId),
+      prev.filter((toast) => toast.id !== notificationId)
     );
-  };
-
-  const handleMarkAsRead = (notificationId: string) => {
     markNotificationAsRead(notificationId);
   };
 
@@ -45,12 +26,9 @@ const NotificationManager: React.FC = () => {
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {activeToasts.map((notification) => (
         <NotificationToast
-          key={notification.id}
+          key={`${notification.id}-${notification.createdAt}`}
           notification={notification}
           onClose={() => handleCloseToast(notification.id)}
-          onRead={() => handleMarkAsRead(notification.id)}
-          autoClose={notification.type !== "reminder"}
-          duration={notification.type === "completion" ? 7000 : 5000}
         />
       ))}
     </div>

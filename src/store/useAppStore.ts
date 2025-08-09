@@ -8,6 +8,7 @@ import {
   DailyVideoActivity,
   AppNotification,
   NotificationSettings,
+  Annotation,
 } from "../types";
 import { 
   RealTimeProgress, 
@@ -17,6 +18,7 @@ import {
 
 interface AppState {
   darkMode: boolean;
+  userName: string;
   playlists: Playlist[];
   videoProgress: Record<string, VideoProgress>;
   currentVideo: Video | null;
@@ -26,11 +28,13 @@ interface AppState {
   dailyActivities: DailyVideoActivity[];
   notifications: AppNotification[];
   notificationSettings: NotificationSettings;
+  annotations: Record<string, Annotation[]>;
   realTimeProgress: Record<string, RealTimeProgress>;
   realTimeStatistics: RealTimeStatistics | null;
   realTimeLearningPath: RealTimeLearningPath | null;
   toggleDarkMode: () => void;
-  toggleSearchMode: () => void;
+  setUserName: (name: string) => void;
+  setIsSearching: (isSearching: boolean) => void;
   setSearchResults: (videos: Video[]) => void;
   addPlaylist: (playlist: Playlist) => void;
   updatePlaylist: (playlistId: string, updates: Partial<Playlist>) => void;
@@ -50,6 +54,10 @@ interface AppState {
   markNotificationAsRead: (notificationId: string) => void;
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   getUnreadNotifications: () => AppNotification[];
+  addAnnotation: (videoId: string, annotation: Annotation) => void;
+  updateAnnotation: (videoId: string, annotationId: string, updates: Partial<Annotation>) => void;
+  deleteAnnotation: (videoId: string, annotationId: string) => void;
+  getAnnotationsForVideo: (videoId: string) => Annotation[];
   setRealTimeProgress: (progress: Record<string, RealTimeProgress>) => void;
   setRealTimeStatistics: (stats: RealTimeStatistics) => void;
   setRealTimeLearningPath: (path: RealTimeLearningPath) => void;
@@ -59,6 +67,8 @@ export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       darkMode: false,
+      userName: '',
+      annotations: {},
       playlists: [],
       videoProgress: {},
       currentVideo: null,
@@ -84,8 +94,7 @@ export const useAppStore = create<AppState>()(
 
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 
-      toggleSearchMode: () =>
-        set((state) => ({ isSearching: !state.isSearching })),
+      setIsSearching: (isSearching) => set({ isSearching }),
 
       setSearchResults: (videos) => set({ searchResults: videos }),
 
