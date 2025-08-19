@@ -9,6 +9,7 @@ import CalendarView from './components/Calendar/CalendarView';
 import LearningPath from './components/LearningPath/LearningPath';
 import Statistics from "./components/Statistics/Statistics";
 import SettingsDashboard from './components/Settings/SettingsDashboard';
+import AIAssistant from './components/AI/AIAssistant';
 import SignIn from './components/Auth/SignIn';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { useRealtimeData } from './hooks/useRealtimeData';
@@ -32,6 +33,7 @@ const AuthenticatedRoutes = () => {
         <Route path="/learning-path" element={<LearningPath />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/settings" element={<SettingsDashboard />} />
+        <Route path="/ai-assistant" element={<AIAssistant />} />
       </Routes>
     </Layout>
   );
