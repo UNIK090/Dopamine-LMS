@@ -67,7 +67,65 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color, trend,
 );
 
 // AI Insights Card
-const AIInsightsCard: React.FC = () => (
+const AIInsightsCard: React.FC = () => {
+  const { userStats, dailyActivities } = useAppStore();
+  
+  // Generate real insights based on actual data
+  const generateInsights = () => {
+    const insights = [];
+    
+    // Analyze watch time patterns
+    const avgWatchTime = userStats.totalWatchTime / Math.max(userStats.completedVideos, 1);
+    if (avgWatchTime > 30) {
+      insights.push({
+        icon: "🎯",
+        title: "Optimal Learning Sessions",
+        description: `Your average session is ${Math.round(avgWatchTime)} minutes - perfect for deep learning!`
+      });
+    }
+    
+    // Analyze completion rate
+    const recentActivities = dailyActivities.slice(-10);
+    const completionRate = recentActivities.filter(a => a.completed).length / Math.max(recentActivities.length, 1);
+    if (completionRate > 0.8) {
+      insights.push({
+        icon: "📈",
+        title: "High Completion Rate",
+        description: `You complete ${Math.round(completionRate * 100)}% of videos you start. Excellent focus!`
+      });
+    }
+    
+    // Streak analysis
+    if (userStats.currentStreak >= 3) {
+      insights.push({
+        icon: "🔥",
+        title: "Learning Momentum",
+        description: `${userStats.currentStreak}-day streak! You're building great learning habits.`
+      });
+    }
+    
+    // Default insights if no data
+    if (insights.length === 0) {
+      insights.push(
+        {
+          icon: "🎯",
+          title: "Getting Started",
+          description: "Start watching videos to unlock personalized AI insights!"
+        },
+        {
+          icon: "📊",
+          title: "Track Progress",
+          description: "Your learning patterns will help me provide better recommendations."
+        }
+      );
+    }
+    
+    return insights.slice(0, 3);
+  };
+  
+  const insights = generateInsights();
+  
+  return (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -79,26 +137,27 @@ const AIInsightsCard: React.FC = () => (
       </div>
       <div>
         <h3 className="text-lg font-semibold">AI Learning Insights</h3>
-        <p className="text-sm text-white/80">Personalized recommendations</p>
+        <p className="text-sm text-white/80">Real-time analysis powered by your data</p>
       </div>
     </div>
     
     <div className="space-y-3">
-      <div className="bg-white/10 rounded-xl p-3">
-        <p className="text-sm font-medium mb-1">🎯 Optimal Learning Time</p>
-        <p className="text-xs text-white/80">You learn best between 2-4 PM. Schedule important videos then!</p>
-      </div>
-      <div className="bg-white/10 rounded-xl p-3">
-        <p className="text-sm font-medium mb-1">📈 Progress Prediction</p>
-        <p className="text-xs text-white/80">At your current pace, you'll complete React mastery in 12 days.</p>
-      </div>
-      <div className="bg-white/10 rounded-xl p-3">
-        <p className="text-sm font-medium mb-1">🧠 Knowledge Gap</p>
-        <p className="text-xs text-white/80">Consider reviewing TypeScript basics to strengthen your foundation.</p>
-      </div>
+      {insights.map((insight, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: index * 0.1 }}
+          className="bg-white/10 rounded-xl p-3"
+        >
+          <p className="text-sm font-medium mb-1">{insight.icon} {insight.title}</p>
+          <p className="text-xs text-white/80">{insight.description}</p>
+        </motion.div>
+      ))}
     </div>
   </motion.div>
-);
+  );
+};
 
 // Real-time Activity Feed
 const RealTimeActivityFeed: React.FC = () => {
